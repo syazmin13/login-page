@@ -1,50 +1,23 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Vulnerable Login</title>
+    <meta charset="UTF-8">
+    <title>Login Page - Secure Corp</title>
 </head>
 <body>
-
-<h2>Login Page</h2>
-
-<input id="email" placeholder="Email"><br><br>
-<input id="password" type="password" placeholder="Password"><br><br>
-
-<button onclick="login()">Login</button>
-
-<p id="output"></p>
-
-<script>
-
-// ❌ No validation at all
-function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  fetch("/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ email, password })
-  })
-  .then(res => res.json())
-  .then(data => {
-
-    // ❌ insecure storage (token in localStorage)
-    localStorage.setItem("token", data.token);
-
-    // ❌ DOM XSS risk
-    document.getElementById("output").innerHTML =
-      "Welcome " + email;
-
-  })
-  .catch(err => {
-    document.getElementById("output").innerHTML = err;
-  });
-}
-
-</script>
-
+    <h2>Login</h2>
+    <form action="/login" method="POST">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username">
+        </div>
+        <br>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" autocomplete="on">
+        </div>
+        <br>
+        <button type="submit">Login</button>
+    </form>
 </body>
 </html>
