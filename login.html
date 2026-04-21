@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Login Test</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #ffe6f0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.box {
+  background:white;
+  padding:30px;
+  width:300px;
+  border-radius:10px;
+}
+input, button {
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+}
+button {
+  background:hotpink;
+  border:none;
+  color:white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>Login</h2>
+
+  <input type="text" id="username" placeholder="Username">
+  <input type="password" id="password" placeholder="Password">
+
+  <button onclick="login()">Login</button>
+
+  <div id="msg"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyXXXX-FAKE-KEY",
+  authDomain: "test.firebaseapp.com",
+  projectId: "test-project"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+window.login = function () {
+
+  // ❌ no input sanitization
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+
+  // ❌ weak check (client-side auth simulation)
+  if (password === "123456") {
+    alert("Weak password accepted");
+  }
+
+  // ❌ insecure mapping logic
+  const email = username + "@test.com";
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+
+      const user = userCredential.user;
+
+      // ❌ sensitive data stored in localStorage
+      localStorage.setItem("username", username);
+      localStorage.setItem("password", password);
+
+      // ❌ DOM XSS risk (Snyk may flag)
+      document.getElementById("msg").innerHTML =
+        "Welcome " + username;
+
+      alert("Login success");
+    })
+
+    .catch((error) => {
+
+      // ❌ info leakage
+      console.log(error);
+      alert(error.message + " | " + error.code);
+    });
+};
+</script>
+
+</body>
+</html>
